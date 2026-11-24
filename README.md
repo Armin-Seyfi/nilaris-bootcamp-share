@@ -39,4 +39,4 @@ Source revision: `21201d419d70665098782b405f260b97a72cff84`. The code captures d
 
 ## Copyright
 
-See the [copyright notice](COPYRIGHT.md) and [third-party notices](third_party/mattpocock-skills/).
+Copyright © 2026 Morteza (Armin) Seyfi. See the [copyright notice](COPYRIGHT.md) and [third-party notices](third_party/mattpocock-skills/).
