@@ -14,11 +14,10 @@ Use the current approved task scope when interpreting historical setup statement
 | [Guarded runtime and retained state](../../runtime/a1/README.md#guarded-runtime-and-retained-state) | Reconcile ownership before renewal, retain lock identity, preserve monitoring/resource bounds, fail closed on stale monitoring, stop only owned services and verify shutdown. |
 | [Command adapter](../../runtime/a1/README.md#admission-command-service-and-textual-client) | Private authenticated configuration, bounded requests/responses, truthful unknown outcomes and original-command recovery; verify the whole process group stops. |
 
-Feature-specific acceptance rules belong to the applicable approved spec/contract,
-not a universal style guide. For example, [Drive155 spec](../execution/drive157/spec.md)
-and [contract](../execution/drive157/contract.md) define its exact source, authority,
-pinning, accounting and disabled-by-default boundaries. Preserve the distinction
-between implemented paths, demonstrated behavior and unverified live behavior.
+Each feature’s approved specification or contract defines its acceptance rules.
+The [Drive source implementation](../../src/nilaris/drive155_source.py) enforces source authorization.
+The [Drive source checks](../../tests/test_drive155_source.py) cover ambiguous configuration and unavailable document revisions.
+Distinguish implementation and controlled test results from verified live behavior.
 
 ## Engineering workflow
 

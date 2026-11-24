@@ -5,19 +5,12 @@ Use only the approved exact setup and L1 in the current review package. At the
 initial setup checkpoint, no human n8n account, Drive credentials, product
 implementation or product tests were established by that setup evidence.
 
-Earlier local implementation and verification are recorded in the
-[integration149 delivery](../../docs/execution/integration149/delivery.md),
-[synthetic n8n153 delivery](../../docs/execution/n8n153/delivery.md) and
-[offline Drive155 delivery](../../docs/execution/drive157/delivery159.md).
-Those records include application tests and actual synthetic n8n engine execution;
-their original offline Drive boundary remains historical. Later retained evidence
-includes one authorized live synthetic PDF capture/fixture-processing journey
-([acceptance reconciliation](../../docs/planning/review171/acceptance.md)),
-[PostgreSQL-only Python orchestration](../../docs/execution/transition167/delivery.md)
-and [actual model-to-review QA](../../docs/execution/experiment172/delivery.md).
-Live Google negative responses, Full114 and broad customer quality remain unverified
-or unresolved at their documented boundaries. Current intake does not require n8n
-([ADR0001](../../docs/adr/0001-python-owned-provider-independent-intake.md)).
+Python coordinates intake. The [stack decision](../../stack_decision.md) explains
+the historical role of n8n and the current [architecture decision](../../docs/adr/0001-python-owned-provider-independent-intake.md).
+The [Drive source adapter](../../src/nilaris/drive155_source.py) checks the authorized
+source and requested document revision. For the processing path, see the
+[Python intake implementation](../../src/nilaris/intake167.py) and the
+[model output publication tests](../../tests/test_semantic172_publication.py).
 
 Historical observations below retain their original scope. Operational and safety
 instructions remain applicable under current task authorization; this file does
@@ -69,8 +62,7 @@ n8n: host127.0.0.1 port5679; separate `nilaris_n8n` role/database (cap2).
 The two connections are occupied by n8n's configured pool; a third setup probe
 was refused as expected. Health200 and actual pooled sessions were observed.
 Those original setup observations did not establish owner UI setup, authored
-workflows or human approval. Later synthetic workflow execution and isolated
-approval evidence is recorded in the n8n153 delivery linked above.
+workflows or human approval.
 
 Application configuration must consistently use127.0.0.1:18765 and A1_APP_TOKEN.
 An authenticated temporary loopback listener was reached from n8n via
@@ -83,8 +75,7 @@ No existing8765 listener was changed. Revalidate binding at real app startup.
 At this checkpoint services are stopped; containers/volumes are retained.
 Physical PostgreSQL scans and owned database CREATE/DROP share the original private
 OS lock at `/private/tmp/nilaris-a1-setup-02/postgres-storage.lock` and its sibling
-`postgres-storage.lock.turnstile`. The [Ticket01 P1 protocol and participant inventory](../../docs/execution/provision181/storage-turnstile.md)
-amend the earlier single-file setup. This documentation does not authorize changing
+`postgres-storage.lock.turnstile`. See the [PostgreSQL storage coordination](../../src/nilaris/storage_coordination.py) implementation for how these two locks are used. This documentation does not authorize changing
 the retained setup. For an authorized **new** setup, initialize both files once,
 only after proving all task services, guards, and tests stopped:
 
@@ -166,7 +157,7 @@ may overshoot and is not a hard storage quota or guaranteed1s scheduling. Startu
 readiness itself is bounded100s. No application work is admitted during setup.
 At that setup checkpoint, application admission/worker RSS/CPU/claims/byte
 accounting/egress controls still required implementation and behavioral tests
-under the accepted L1 contract. Later evidence is linked above.
+under the accepted L1 contract.
 Do not claim this service setup proves those controls or product acceptance.
 
 The guard reserves2GiB for the acquired images (reported total479145441 bytes)
