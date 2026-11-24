@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Review-first B · NILARIS</title>
+  <link rel="stylesheet" href="/review-first-b.css">
+  <script type="module" src="/review-first-b.mjs"></script>
+</head>
+<body>
+<header><b>NILARIS</b><span>Expert review</span><a href="/">Customer workspace</a></header>
+<main>
+  <p id="loading" role="status">Opening the customer draft…</p>
+  <div id="workspace" hidden>
+    <div class="heading"><div><p id="customer"></p><h1 id="product"></h1></div>
+      <div class="schema"><strong>Whole Schema · Draft</strong><span id="revision"></span></div>
+    </div>
+    <section id="review" hidden aria-labelledby="matrixTitle">
+      <h2 id="matrixTitle">Stage obligations</h2>
+      <p id="summary" role="status"></p>
+      <div class="scroll"><table id="matrix"><thead></thead><tbody></tbody></table></div>
+      <button id="finish">Finish review</button><button id="back" hidden>Back to editing</button>
+      <button id="bulk" class="primary" hidden></button>
+    </section>
+    <div class="layout">
+      <aside><h2>Attention <span id="count"></span></h2><p id="reason"></p>
+        <button id="row" aria-controls="inspector"><strong id="attribute"></strong><span id="rowState"></span></button>
+      </aside>
+      <article id="inspector" hidden>
+        <p id="scenario"></p><h2 id="selected" tabindex="-1"></h2>
+        <div class="cards">
+          <section class="source"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2h9l5 5v15H5z M14 2v6h5 M8 12h8 M8 16h6"/></svg>Supplier offer</h3>
+            <p id="value"></p><p id="scope"></p>
+            <details id="evidence"><summary>Inspect evidence</summary><p id="locator"></p><blockquote id="passage"></blockquote>
+              <strong>Documents inspected</strong><ul id="documents"></ul>
+              <p id="pdfStatus" role="status"></p><a id="original" target="_blank" rel="noopener" hidden>Open original PDF at passage ↗</a>
+            </details>
+          </section>
+          <section class="expert"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="7" r="4"/><path d="M2 21v-2a8 8 0 0 1 12-7 M13 21l1-4 6-6 3 3-6 6z"/></svg>Expert decision</h3>
+            <p id="membership"></p><ul id="confirmed"></ul><p id="attribution"></p>
+            <p id="status" role="status" aria-live="polite"></p>
+            <button id="add" hidden>Add to Schema</button>
+            <button id="edit" hidden>Edit stage obligations</button>
+            <form id="editor" hidden><fieldset><legend>Required procurement stages</legend>
+              <label><input type="checkbox" value="customer-rfq"> Customer RFQ</label>
+              <label><input type="checkbox" value="supplier-offer"> Supplier offer</label>
+              <label><input type="checkbox" value="before-manufacture"> After order and before manufacture</label>
+              <label class="optional"><input type="checkbox" id="optional"> Optional at all stages</label>
+            </fieldset><button id="apply" class="primary">Apply</button><button id="cancel" type="button">Cancel</button></form>
+            <button id="refresh" hidden>Refresh current decision</button>
+            <button id="check" hidden>Check save result</button><button id="retry" hidden>Retry original save</button>
+          </section>
+        </div>
+      </article>
+    </div>
+  </div>
+</main>
+</body></html>

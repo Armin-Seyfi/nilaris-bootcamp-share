@@ -1,0 +1,3 @@
+#!/bin/sh
+printf '%s\n' 'Historical Case_001 source documents are not distributed in the bootcamp snapshot.' >&2
+exit 1

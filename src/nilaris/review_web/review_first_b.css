@@ -1,0 +1,65 @@
+* { box-sizing: border-box }
+[hidden] { display: none !important }
+body { margin: 0; background: #f3f4f6; color: #273442; font: 16px/1.5 system-ui, sans-serif }
+header { display: flex; gap: 24px; align-items: center; background: #293448; color: white; padding: 10px 4vw }
+header b { letter-spacing: .14em }
+header a { margin-left: auto; color: white }
+main { max-width: 1250px; margin: auto; padding: 24px clamp(12px, 3vw, 40px) }
+.heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 18px }
+h1, h2, h3, p { margin: 0 0 .65rem }
+h1 { font-size: clamp(24px, 3vw, 34px); line-height: 1.18 }
+h2 { font-size: 22px }
+.schema { display: grid; border-left: 4px solid #946b28; background: #fff7e6; color: #503b1e; padding: 9px 16px }
+.layout { display: grid; grid-template-columns: minmax(200px, .8fr) 2.6fr; gap: 14px; align-items: start }
+aside, article { background: white; padding: 18px; border: 1px solid #c9d1dc; border-radius: 7px }
+#customer, #scenario, #rowState, #attribution, #locator { font-size: .9rem; color: #4d5b6c; overflow-wrap: anywhere }
+#row { width: 100%; text-align: left; padding: 10px; border-left: 4px solid #667c99 }
+#row[aria-current="true"] { background: #edf1fa; border-left-color: #314d7a }
+#row span, label { display: block }
+.cards { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 12px }
+section { padding: 15px; border: 1px solid #cbd6dd; border-radius: 7px }
+.source { background: #eff7f5; border-top: 4px solid #397468 }
+.expert { background: #f5f6fc; border-top: 4px solid #455b88 }
+h3 { font-size: 17px; display: flex; align-items: center; gap: 8px }
+svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round }
+#value { font-size: 32px; font-weight: 650 }
+summary { cursor: pointer; color: #24594e }
+blockquote { margin: .5rem 0; padding-left: .6rem; border-left: 2px solid #397468 }
+a { color: #254678 }
+ul { list-style-type: none; padding: 0 }
+#status { border-left: 3px solid #637d9e; padding-left: .55rem }
+button { padding: 7px 11px; font: inherit; color: inherit; background: white; border: 1px solid #8594a8; border-radius: 5px; cursor: pointer }
+button.primary { background: #364b75; color: white; margin-right: 6px }
+button:disabled { opacity: .6; cursor: default }
+fieldset { padding: 0; margin: 0 0 10px; border: 0 }
+legend { font-weight: 650 }
+label { padding: 5px 0 }
+.optional { border-top: 1px solid #cdd5de }
+input { width: 17px; height: 17px; vertical-align: middle }
+:focus-visible { outline: 3px solid #bd7415; outline-offset: 3px }
+@media (max-width: 850px) { .cards { grid-template-columns: 1fr } }
+@media (max-width: 640px) { .layout { grid-template-columns: 1fr } header { gap: 12px; font-size: .88rem } }
+
+@media (max-width: 850px) {
+  .heading { display: contents }
+  .schema { position: sticky; top: 0; z-index: 1; margin: 0 0 14px; padding: 6px 12px }
+  html { scroll-padding-top: 5rem }
+  #documents { overflow-wrap: anywhere }
+}
+@media (min-width: 851px) {
+  .heading { position: sticky; top: 0; z-index: 1; padding: 6px 0; background: #f3f4f6 }
+  html { scroll-padding-top: 7rem }
+}
+#review { background: white; margin-bottom: 1rem }
+.matrix-layout { display: block }
+.scroll { overflow-x: auto; padding: 4px }
+#matrix { width: 100%; border-collapse: collapse; margin-bottom: 1rem }
+#matrix th, #matrix td { text-align: left; padding: .65rem; border-bottom: 1px solid #ccd4de }
+#matrix th { background: #f4f6f9 }
+#matrix small { display: block; font-weight: normal }
+#matrix button { text-align: left }
+#matrix span + button { margin-left: 1rem }
+.proposed { display: block; padding: .5rem; border: 2px dashed #36517e; background: #edf3ff }
+
+.preview-matrix { overflow-x: auto }
+.source-digest { overflow-wrap: anywhere }

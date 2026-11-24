@@ -1,0 +1,8 @@
+# Task-local state is currently outside Git at /private/tmp/nilaris-a1-setup-02/.
+# Keep equivalent local state excluded if an operator relocates it here.
+.local/
+overlay/
+wheels/
+*.env
+*.log
+*.pid

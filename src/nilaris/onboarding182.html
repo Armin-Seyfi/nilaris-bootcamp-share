@@ -1,0 +1,327 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NILARIS · Customer access and onboarding</title>
+<style>body{font:16px system-ui;margin:0;background:#f3f5f8;color:#182635}main{max-width:850px;margin:40px auto;padding:24px}h1{font-size:30px}section{background:white;border:1px solid #d9e0e8;padding:22px;margin:18px 0;border-radius:12px}label{display:block;margin:12px 0}input{display:block;box-sizing:border-box;width:100%;padding:10px;border:1px solid #aab8c6;border-radius:5px;font:inherit}button{padding:10px 16px;border:0;border-radius:5px;background:#184d70;color:white;cursor:pointer;margin:4px}button.secondary{background:#536476}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#edf3f7;padding:16px}small{color:#526274}#feedback{font-weight:600;position:sticky;top:0;z-index:1;margin:0;padding:14px 20px;background:#edf3f7;border-bottom:2px solid #184d70}fieldset{border:0;padding:0}details{margin:15px 0}[hidden]{display:none}</style>
+<p id="feedback" role="status" aria-live="polite">Sign in to begin.</p><main><small>CONTROLLED LOCAL QA · No production authentication or email delivery</small><h1>Customer access and onboarding</h1><p>Create an empty customer, hand off one private invitation, then sign in independently as the designated recipient.</p>
+<section><h2>Sign in</h2><form id="login"><label>Controlled identity credential<input id="credential" type="password" autocomplete="off" required></label><button>Sign in</button><button type="button" id="logout" class="secondary">Sign out</button></form><p id="identity">Signed out</p><small>Invitation possession does not authenticate you. Reauthentication retains your private pending command.</small></section>
+<section id="operator" hidden><h2>Operator</h2><form data-action="change_access">
+<h3>Customer access</h3>
+<label>Customer provisioning operation ID<input name="operation_id" required maxlength="100"></label>
+<button type="button" id="inspect-access">Inspect provisioning and access state</button>
+<label>Current access revision<input name="expected_revision" type="number" min="0" step="1" required></label>
+<label>Stable access command ID<input name="command_id" required maxlength="100"></label>
+<label>Requested access state <select name="access_state"><option value="suspended">Suspended</option><option value="active">Active</option></select></label>
+<button>Apply access change</button>
+<p>Suspending access blocks existing sessions and invitation redemption. Reactivating access requires a fresh sign-in.</p>
+</form>
+<h3>Exact access command</h3>
+<button id="pending-access">Inspect pending access command</button>
+<button id="resolve-access">Resolve original access command</button>
+<button id="retry-access">Retry original access command</button>
+<button id="ack-access" class="secondary">Acknowledge access result</button>
+<form data-action="provision"><label>Original provisioning operation ID<input name="operation_id" required maxlength="100"></label><button>Create customer / resolve original</button><button type="button" id="status">Inspect original status</button></form><details><summary>Invite the designated initial Administrator</summary><form data-action="invite"><label>Ready customer provisioning operation ID<input name="operation_id" required></label><label>Stable invitation command ID<input name="command_id" required></label><label>Recipient identity issuer<input name="recipient_issuer" required></label><label>Recipient subject<input name="recipient_subject" required></label><label>Customer-designated verified recipient binding<input name="recipient_binding" required></label><label>Explicit expiry (UTC)<input name="expires_at" type="datetime-local" required step="1"></label><small>The date field is interpreted as UTC. The server enforces the configured finite ceiling.</small><p><button>Issue private invitation</button></p></form></details><form data-action="invitation_status"><label>Original invitation command ID<input name="command_id" required></label><button>Inspect invitation</button><button type="button" id="revoke">Revoke own invitation</button></form><small>Private delivery references contain no redemption secret. Handoff occurs through the protected local transport only. Unknown delivery keeps the original command; it never resends automatically.</small></section>
+<section id="customer" hidden><h2>Designated recipient</h2><form data-action="accept"><label>Import private invitation handoff (local JSON)<input id="invitation-file" type="file" accept="application/json,.json"></label><label>Invitation ID for acceptance and exact recovery<input name="invitation_id" required autocomplete="off"></label><label>Private invitation secret<input name="secret" type="password" required autocomplete="off"></label><label>Stable acceptance command ID<input name="command_id" required></label><button>Accept once</button><button id="resolve-legacy" type="button" class="secondary">Resolve historical refusal by command ID</button><button id="ack-legacy" type="button" class="secondary">Acknowledge historical refusal by command ID</button></form><form data-action="landing"><label>Your customer ID<input name="customer_id" required></label><button>Open administrative landing</button></form><small>Administrator grants account metadata only. Reviewer and Approver permissions are assigned separately.</small></section>
+<section id="intake-dashboard" hidden><h2>Customer intake</h2>
+<label>Customer ID<input id="intake-customer" autocomplete="off"></label>
+<button id="intake-open">Open intake</button>
+<div id="intake-work" hidden>
+<label>Synthetic technical sheet<select id="intake-source"></select></label>
+<label>Original intake command ID<input id="intake-key" maxlength="100" autocomplete="off"></label>
+<button id="intake-admit">Admit sheet</button><button id="intake-resolve">Inspect original admission</button><button id="intake-list">View scoped jobs</button>
+<label>Original job ID<input id="intake-job-id" maxlength="100" autocomplete="off"></label>
+<p><button id="intake-inspect-pending">Inspect pending admission</button> <button id="intake-retry-pending" hidden>Retry exact original</button> <button id="intake-ack-pending" hidden>Acknowledge resolved original</button></p><button id="intake-find">Inspect job</button><ul id="intake-jobs" aria-live="polite"></ul></div>
+<div id="intake-admin" hidden><button id="policy-read">Inspect disclosure policy</button>
+<pre id="policy-route"></pre>
+<label>Authorization evidence reference<input id="policy-evidence" maxlength="160"></label>
+<label>Original policy command ID<input id="policy-key" maxlength="100" autocomplete="off"></label>
+<button id="policy-status">Inspect original policy command</button>
+<p><button id="policy-inspect-pending">Inspect pending policy command</button> <button id="policy-retry-pending" hidden>Retry exact original</button> <button id="policy-ack-pending" hidden>Acknowledge resolved original</button></p><button id="policy-allow">Authorize controlled route</button><button id="policy-hold">Disable controlled route</button></div>
+</section>
+<section id="expert-dashboard" hidden><h2>Expert review</h2>
+<label>Customer ID<input id="expert-customer" autocomplete="off"></label>
+<button id="load-proposals">View proposals</button><ul id="expert-proposals"></ul><button id="more-proposals" hidden>Next proposals</button></section>
+<section id="management" hidden>
+<h2>Users and invitations</h2>
+<label>Customer ID<input id="manage-customer" autocomplete="off"></label>
+<button id="load-roster">View users and invitations</button>
+<div id="roster" aria-live="polite"></div>
+<form id="membership-command" hidden>
+<label>Action <select name="kind">
+<option value="invite">Invite a colleague</option><option value="roles">Change roles</option>
+<option value="revoke">Revoke invitation</option><option value="deactivate">Deactivate membership</option>
+</select></label>
+<fieldset id="recipient-fields">
+<label>Recipient issuer<input name="recipient_issuer"></label>
+<label>Recipient subject<input name="recipient_subject"></label>
+<label>Verified recipient binding<input name="recipient_binding"></label>
+<label>Invitation expires (UTC)<input name="expires_at" type="datetime-local" step="1"></label>
+</fieldset>
+<label id="target-label" hidden>Choose a user or invitation <select name="target"></select></label>
+<fieldset id="role-fields"><legend>Roles</legend>
+<label><input type="checkbox" name="role" value="Administrator">Administrator</label>
+<label><input type="checkbox" name="role" value="Reviewer">Reviewer</label>
+<label><input type="checkbox" name="role" value="Approver">Approver</label>
+</fieldset>
+<button>Apply membership command</button>
+</form>
+<label>Original command <select id="management-recovery"><option value="management_customer">Invitation or membership change</option><option value="management_revocation">Revocation</option></select></label>
+<button id="inspect-management">Inspect pending command</button><button id="resolve-management">Resolve original result</button>
+<button id="retry-management">Retry original command</button><button id="ack-management">Acknowledge result</button>
+</section>
+<section><h2>Exact pending command</h2><p>Commands remain private to your signed-in identity across sign-out and restart. For a customer acceptance, select its invitation ID above. After signing in with empty fields, you can recover a single pending command. Review the result before acknowledging. Resolving reads the original result without replaying the command.</p><button id="pending">Inspect pending</button><button id="resolve">Resolve exact pending</button><button id="retry-accept">Retry original acceptance</button><button id="acknowledge" class="secondary">Acknowledge result / clear pending</button><p id="pending-state"></p><h3>Independent explicit revocation</h3><p>Revoking an invitation saves a separate exact command, even while delivery is unknown. The original pending command remains intact. Resolution confirms revocation only when the invitation is revoked.</p><button id="pending-revocation">Inspect pending revocation</button><button id="resolve-revocation">Resolve exact revocation</button><button id="acknowledge-revocation" class="secondary">Acknowledge revocation result</button><p id="revocation-state"></p></section>
+<section aria-live="polite"><h2>Result</h2><pre id="result">No request yet.</pre></section></main>
+<script>
+const $=s=>document.querySelector(s);let busy=false;
+const acceptForm=$('form[data-action=accept]'), landingForm=$('form[data-action=landing]');
+let customerView=0, needsInvitation=false;
+function clearCustomerResult(){
+  clearIntake();
+  $('#more-proposals').hidden=true;
+  $('#expert-proposals').replaceChildren();
+  clearRoster();
+  customerView++;
+  $('#result').textContent='';$('#pending-state').textContent='';
+  $('#feedback').textContent='';
+}
+function customerRecovery(path){
+  const invitation=acceptForm.elements.invitation_id.value;
+  if(!$('#customer').hidden && !invitation && (needsInvitation || landingForm.elements.customer_id.value)){
+    clearCustomerResult();$('#feedback').textContent='Enter the invitation ID for exact recovery.';return;
+  }
+  return request(path, !$('#customer').hidden && invitation ? {invitation_id:invitation} : {});
+}
+acceptForm.elements.invitation_id.oninput=()=>{
+  clearCustomerResult();acceptForm.elements.secret.value='';acceptForm.elements.command_id.value='';
+  landingForm.elements.customer_id.value='';
+};
+landingForm.elements.customer_id.oninput=()=>{clearCustomerResult();acceptForm.reset();};
+
+async function request(path,body){if(busy)return;busy=true;if(!$('#customer').hidden&&(body.invitation_id||body.customer_id))needsInvitation=true;const view=customerView;if(!$('#customer').hidden)$('#pending-state').textContent='';$('#feedback').textContent='Loading…';document.querySelectorAll('button').forEach(b=>b.disabled=true);try{const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const v=await r.json();if(view!==customerView)return;if(r.status===403&&!$('#customer').hidden){clearCustomerResult();acceptForm.reset();landingForm.reset();}$('#result').textContent=JSON.stringify(v,null,2);$('#feedback').textContent=v.state==='unknown'?'Outcome unknown. Keep the original pending command.':(r.ok&&v.state==='pending'&&v.delivery==='unknown'?'Invitation saved; delivery outcome unknown. Keep original command; inspect or revoke explicitly.':(r.ok?(v.state==='refused'?(v.reason==='original acceptance refused'?'Original acceptance refused. Acknowledge it before submitting a corrected command.':v.reason==='original access command refused'?'Original access command refused. Acknowledge it before submitting a corrected command.':v.reason||'Change refused.'):v.state==='in_progress'?'Original access command is in progress. Resolve it before retrying.':v.state==='confirmed'?'Access change confirmed at revision '+v.revision+'.':v.provisioning_state?'Provisioning '+v.provisioning_state+' · Access '+v.access_state+' · Revision '+v.revision:'Saved status: '+(v.state||'available')):(v.reason||'Request refused.')));if(r.status===403&&String(v.reason).includes('reauth')){showIdentity(null);$('#feedback').textContent='Reauthenticate. Your exact pending command is retained.';}return v;}catch(e){$('#feedback').textContent='Connection lost; outcome unknown. Reauthenticate and inspect your original pending command.';}finally{busy=false;document.querySelectorAll('button').forEach(b=>b.disabled=false);}}
+function showIdentity(kind){clearIntake();$('#intake-dashboard').hidden=kind!=='customer';clearRoster();$('#more-proposals').hidden=true;$('#expert-proposals').replaceChildren();$('#expert-dashboard').hidden=kind!=='customer';$('#management').hidden=kind!=='customer';needsInvitation=false;$('#operator').hidden=kind!=='operator';$('#customer').hidden=kind!=='customer';$('#identity').textContent=kind?'Signed in as '+kind:'Signed out';$('#result').textContent='';document.querySelectorAll('input:not([type=checkbox])').forEach(i=>i.value='');$('#pending-state').textContent='';$('#revocation-state').textContent='';}
+let policyRevision, controlledRoute;
+const intakeSlots=new Map(), inspectedTags=new Map();
+function clearIntake(){
+  intakeSlots.clear(); inspectedTags.clear();
+  for(const prefix of ['intake','policy']){ $('#'+prefix+'-retry-pending').hidden=true; $('#'+prefix+'-ack-pending').hidden=true; }
+  $('#intake-work').hidden=true; $('#intake-admin').hidden=true;
+  $('#intake-jobs').replaceChildren(); $('#intake-source').replaceChildren();
+  $('#policy-route').textContent=''; policyRevision=undefined; controlledRoute=undefined;
+  for(const id of ['intake-key','intake-job-id','policy-key','policy-evidence']) $('#'+id).value='';
+}
+function intakeRequest(path, fields={}){
+  $('#intake-jobs').replaceChildren();
+  $('#result').textContent='';
+  return request('/intake/'+path,{customer_id:$('#intake-customer').value.trim(),...fields});
+}
+$('#intake-customer').oninput=clearCustomerResult;
+$('#intake-open').onclick=async()=>{
+  clearCustomerResult();
+  const v=await intakeRequest('capabilities'); if(!v)return;
+  for(const kind of ['admit','set-policy'])if(v[kind+'_slot'])intakeSlots.set(kind,v[kind+'_slot']);
+  $('#intake-work').hidden=!v.intake; $('#intake-admin').hidden=!v.policy_admin;
+  for(const key of v.source_keys||[]) $('#intake-source').add(new Option(key,key));
+};
+function showJobs(jobs){
+  const list=$('#intake-jobs'); list.replaceChildren();
+  for(const job of jobs){
+    const row=document.createElement('li');
+    const outcome=job.state==='completed' && job.receipt
+      ? 'Completed · local receiver verified '+job.receipt.bytes+' bytes'
+      : [job.state,(job.reason || '').replaceAll('_',' ')].filter(Boolean).join(' · ');
+    row.textContent=[job.source_key,job.job_id,outcome].join(' · ');
+    list.append(row);
+  }
+  if(!jobs.length)list.textContent='No admitted jobs.';
+}
+$('#intake-list').onclick=async()=>{const v=await intakeRequest('jobs');if(v?.jobs)showJobs(v.jobs);};
+$('#intake-find').onclick=async()=>{
+  const v=await intakeRequest('job',{job_id:$('#intake-job-id').value});
+  if(v?.job_id)showJobs([v]);
+};
+$('#intake-resolve').onclick=async()=>{
+  const v=await intakeRequest('admission-status',{command_id:$('#intake-key').value});
+  if(v?.job_id)showJobs([v]);
+};
+async function privateIntake(kind, action, fields){
+  if(busy)return;
+  const customer=$('#intake-customer').value.trim(), view=customerView, slot=intakeSlots.get(kind);
+  const prefix=kind==='admit'?'intake':'policy';
+  const retry=$('#'+prefix+'-retry-pending'), ack=$('#'+prefix+'-ack-pending');
+  const inspected=inspectedTags.get(kind);
+  if(action==='retry' && !window.confirm('Retry the exact original command with its original ID and body?'))return;
+  function current(){return view===customerView && intakeSlots.get(kind)===slot && $('#intake-customer').value.trim()===customer;}
+  async function send(path,body){
+    if(!current())throw Error('Customer context changed.');
+    const response=await fetch('/intake/'+path,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({customer_id:customer,...body})});
+    const value=await response.json();
+    if(!current())throw Error('Customer context changed.');
+    if(!response.ok){
+      if(response.status===403){clearCustomerResult();$('#feedback').textContent=value.reason||'Customer access refused.';}
+      throw Error(value.reason||'Command outcome unavailable. Inspect the private pending command.');
+    }
+    return value;
+  }
+  busy=true;document.querySelectorAll('button').forEach(b=>b.disabled=true);
+  $('#intake-jobs').replaceChildren();$('#result').textContent='';$('#feedback').textContent='Checking original command…';
+  retry.hidden=true;ack.hidden=true;inspectedTags.delete(kind);
+  try{
+    const {openIntakeCommands}=await import('/intake-intent.js');
+    const commands=await openIntakeCommands(kind,slot,send);
+    const value=action==='submit'?await commands.submit(fields):
+      action==='inspect'?await commands.inspect():
+      action==='retry'?await commands.retry(inspected):await commands.acknowledge(inspected);
+    if(!current())return;
+    $('#result').textContent=JSON.stringify(value,null,2);
+    if(action==='inspect'){
+      inspectedTags.set(kind,value.tag);
+      retry.hidden=value.state!=='absent';ack.hidden=value.state!=='known';
+    }
+    if(value.job_id)showJobs([value]);
+    $('#feedback').textContent=value.reason||({
+      empty:'No pending command.',absent:'Original outcome absent. Review the retained body before an explicit retry.',
+      known:'Original outcome confirmed.',deferred:'Admission deferred.'
+    }[value.state]||'Confirmed.');
+  }catch(error){
+    if(current()){
+      const control=$('#'+prefix+'-inspect-pending').textContent;
+      $('#feedback').textContent='Choose “'+control+'” before retrying. '+error.message;
+    }
+  }finally{busy=false;document.querySelectorAll('button').forEach(b=>b.disabled=false);}
+}
+for(const [prefix,kind] of [['intake','admit'],['policy','set-policy']]){
+  for(const action of ['inspect','retry','ack'])
+    $('#'+prefix+'-'+action+'-pending').onclick=()=>privateIntake(kind,action);
+}
+$('#intake-admit').onclick=()=>privateIntake('admit','submit',{
+  source_key:$('#intake-source').value,command_id:$('#intake-key').value});
+$('#policy-read').onclick=async()=>{
+  policyRevision=undefined; controlledRoute=undefined; $('#policy-route').textContent='';
+  const v=await intakeRequest('policy'); if(!Number.isInteger(v?.revision))return;
+  policyRevision=v.revision; controlledRoute=v.controlled_route;
+  $('#policy-route').textContent=(v.policy?.active?'Active disclosure policy':'Disclosure inactive')+' · revision '+v.revision+'\nControlled route available for authorization\n'+JSON.stringify(controlledRoute,null,2);
+};
+async function changePolicy(active){
+  if(policyRevision===undefined){$('#feedback').textContent='Inspect the current disclosure policy first.';return;}
+  const expectedRevision=policyRevision;
+  policyRevision=undefined;
+  $('#policy-route').textContent='Inspect the original command or read the current disclosure policy after submission.';
+  await privateIntake('set-policy','submit',{command_id:$('#policy-key').value,expected_revision:expectedRevision,
+    policy:{active,route:controlledRoute,evidence_ref:$('#policy-evidence').value}});
+}
+$('#policy-status').onclick=()=>intakeRequest('policy-status',{command_id:$('#policy-key').value});
+$('#policy-allow').onclick=()=>changePolicy(true);
+$('#policy-hold').onclick=()=>changePolicy(false);
+$('#expert-customer').oninput=clearCustomerResult;
+async function showProposals(cursor){
+  const customer=$('#expert-customer').value.trim(), list=$('#expert-proposals');
+  list.replaceChildren();$('#more-proposals').hidden=true;
+  const result=await request('/expert/dashboard',{customer_id:customer,...(cursor?{cursor}:{})});
+  if(!result?.proposals || customer!==$('#expert-customer').value.trim())return;
+  if(!result.proposals.length)list.textContent='No proposals available for review.';
+  for(const row of result.proposals){
+    const item=document.createElement('li'), link=document.createElement('a');
+    const stageReview=row.workspace==='review-first-b';
+    link.href=(stageReview?'/review-first-b?':'/expert?')+new URLSearchParams({customer,job:row.job_id});
+    link.textContent=(stageReview?'Review-first B · ':'')+row.product_type+' · '+row.job_id;
+    if (!stageReview || result.roles.includes('Reviewer')) item.append(link);
+    if (stageReview && row.draft_id && result.roles.includes('Approver')) {
+      const preview = document.createElement('a');
+      preview.href = '/schema-preview?' + new URLSearchParams({customer, job:row.job_id, draft:row.draft_id, revision:row.revision});
+      preview.textContent = 'Preview whole Schema · ' + row.product_type + ' · revision ' + row.revision;
+      item.append(' ', preview);
+    }
+    list.append(item);
+  }
+  $('#more-proposals').hidden=!result.next_cursor;
+  $('#more-proposals').onclick=()=>showProposals(result.next_cursor);
+}
+$('#load-proposals').onclick=()=>showProposals(null);
+$('#login').onsubmit=async e=>{e.preventDefault();const v=await request('/session',{credential:$('#credential').value});$('#credential').value='';if(v&&v.state==='authenticated')showIdentity(v.principal_class);};
+$('#logout').onclick=async()=>{await request('/logout',{});showIdentity(null);$('#feedback').textContent='Signed out; private pending command retained.';};
+document.querySelectorAll('form[data-action]').forEach(f=>f.onsubmit=async e=>{e.preventDefault();const v=Object.fromEntries(new FormData(f));if(f.dataset.action==='change_access')v.expected_revision=Number(v.expected_revision);if(v.expires_at)v.expires_at=Date.parse(v.expires_at+'Z')/1000;await request('/command',{action:f.dataset.action,...v});f.querySelectorAll('input[type=password]').forEach(i=>i.value='');});
+$('#inspect-access').onclick=()=>request('/command',{action:'access_status',operation_id:document.querySelector('form[data-action=change_access]').elements.operation_id.value});
+for(const [button,path] of [['pending-access','pending'],['resolve-access','resolve'],['retry-access','retry'],['ack-access','acknowledge']]){
+  $('#'+button).onclick=()=>request('/'+path,{channel:'access'});
+}
+$('#retry-accept').onclick=()=>customerRecovery('/retry');
+$('#status').onclick=()=>request('/command',{action:'status',operation_id:document.querySelector('form[data-action=provision] input').value});
+$('#revoke').onclick=()=>request('/command',{action:'revoke',command_id:document.querySelector('form[data-action=invitation_status] input').value});
+$('#invitation-file').onchange=async e=>{try{const file=e.target.files[0];if(!file||file.size>12000)throw Error();const handoff=JSON.parse(await file.text());clearCustomerResult();acceptForm.reset();const form=document.querySelector('form[data-action=accept]');form.elements.invitation_id.value=handoff.invitation_id;form.elements.secret.value=handoff.secret;document.querySelector('form[data-action=landing] input').value=handoff.customer_id;$('#feedback').textContent='Private invitation loaded. Sign in independently as its designated recipient before acceptance.';}catch(e){$('#feedback').textContent='Invalid private invitation file.';}finally{e.target.value='';}};
+function historicalRecovery(path){
+  const command=acceptForm.elements.command_id.value;
+  if(!command){clearCustomerResult();$('#feedback').textContent='Enter the original acceptance command ID.';return;}
+  return request(path,{command_id:command});
+}
+$('#resolve-legacy').onclick=()=>historicalRecovery('/resolve');
+$('#ack-legacy').onclick=()=>historicalRecovery('/acknowledge');
+$('#pending').onclick=async()=>{const v=await customerRecovery('/pending');if(v&&v.state==='pending')$('#pending-state').textContent=JSON.stringify(v);};$('#resolve').onclick=()=>customerRecovery('/resolve');$('#acknowledge').onclick=()=>customerRecovery('/acknowledge');
+$('#pending-revocation').onclick=async()=>{const v=await request('/pending',{channel:'revocation'});if(v)$('#revocation-state').textContent=JSON.stringify(v);};$('#resolve-revocation').onclick=()=>request('/resolve',{channel:'revocation'});$('#acknowledge-revocation').onclick=()=>request('/acknowledge',{channel:'revocation'});
+const manageCustomer = $('#manage-customer');
+const managementForm = $('#membership-command');
+let roster = null;
+function clearRoster() {
+  roster = null;
+  $('#roster').replaceChildren();
+  managementForm.reset();
+  managementForm.elements.target.replaceChildren();
+  managementForm.hidden = true;
+}
+function memberIdentity(item) {
+  return "User " + JSON.stringify(item.subject || item.recipient_subject) +
+    " · Issuer " + JSON.stringify(item.issuer || item.recipient_issuer);
+}
+function chooseManagementAction() {
+  const kind = managementForm.elements.kind.value;
+  $('#recipient-fields').hidden = kind !== 'invite';
+  $('#target-label').hidden = kind === 'invite';
+  $('#role-fields').hidden = !['roles','invite'].includes(kind);
+  const targets = managementForm.elements.target;
+  targets.replaceChildren();
+  for (const item of kind === 'revoke' ? roster.invitations : roster.users) {
+    if (kind === 'revoke' ? item.state !== 'pending' : !item.active) continue;
+    targets.add(new Option(memberIdentity(item), item.membership_id || item.invitation_id));
+  }
+  showTargetRoles();
+}
+function showTargetRoles() {
+  const member = roster.users.find(item => item.membership_id === managementForm.elements.target.value);
+  for (const role of managementForm.elements.role)
+    role.checked = managementForm.elements.kind.value === 'roles' && member && member.roles.includes(role.value);
+}
+manageCustomer.oninput = () => { clearCustomerResult(); clearRoster(); };
+managementForm.elements.kind.onchange = chooseManagementAction;
+managementForm.elements.target.onchange = showTargetRoles;
+$('#load-roster').onclick = async () => {
+  clearRoster();
+  const result = await request('/command', {action:'members',customer_id:manageCustomer.value});
+  if (result?.state !== 'available') return;
+  roster = result;
+  for (const item of [...result.users, ...result.invitations]) {
+    const row = document.createElement('p');
+    row.textContent = [memberIdentity(item), item.roles.join(', '),
+      item.state || (item.active ? 'active' : 'deactivated')].join(' · ');
+    $('#roster').append(row);
+  }
+  managementForm.hidden = false;
+  chooseManagementAction();
+};
+managementForm.onsubmit = async event => {
+  event.preventDefault();
+  if (!roster) return;
+  const fields = new FormData(managementForm);
+  const kind = fields.get('kind');
+  const command = {kind};
+  if (kind === 'invite') {
+    for (const field of ['recipient_issuer','recipient_subject','recipient_binding']) command[field] = fields.get(field);
+    command.expires_at = Date.parse(fields.get('expires_at')+'Z')/1000;
+  } else command.target = fields.get('target');
+  if (['invite','roles'].includes(kind)) command.roles = fields.getAll('role');
+  const requestBody = {action:'manage',customer_id:manageCustomer.value,expected_revision:roster.revision,
+    command_id:crypto.randomUUID(),command};
+  $('#management-recovery').value = kind === 'revoke' ? 'management_revocation' : 'management_customer';
+  clearRoster();
+  await request('/command',requestBody);
+};
+for (const [button,endpoint] of [['inspect','pending'],['resolve','resolve'],['retry','retry'],['ack','acknowledge']]) {
+  $('#'+button+'-management').onclick = () => request('/'+endpoint,{[$('#management-recovery').value]:manageCustomer.value});
+}
+</script></html>

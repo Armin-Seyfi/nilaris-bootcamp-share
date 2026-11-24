@@ -1,0 +1,76 @@
+{
+  "context": {
+    "case_id": "a1-case-fixture",
+    "classification": "not_discovered",
+    "membership_revision": "a1-manifest-1",
+    "nominated_product_type": "Fixture pump",
+    "origin": "supplied"
+  },
+  "deliveries": [
+    {
+      "artifact": "P.pdf",
+      "delivery_key": "a1-delivery-P",
+      "document_id": "a1-doc-P",
+      "identity": "resolved",
+      "input_bytes": 1505,
+      "intent_id": "ordinary",
+      "media_type": "application/pdf",
+      "sha256": "4fb883b2ae49d073b37bb649917050da03c16a4e6e86f1cdb6c4ff3bdb336c34",
+      "source_id": "a1-source-P",
+      "source_revision": "a1-P-r1"
+    },
+    {
+      "artifact": "W.xlsx",
+      "delivery_key": "a1-delivery-W",
+      "document_id": "a1-doc-W",
+      "identity": "resolved",
+      "input_bytes": 4955,
+      "intent_id": "ordinary",
+      "media_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "sha256": "60a189fe2d10d4f4b113668ad465c5700f7ba38ebff0074461d6e462a32aa575",
+      "source_id": "a1-source-W",
+      "source_revision": "a1-W-r1"
+    },
+    {
+      "artifact": "P2.pdf",
+      "delivery_key": "a1-delivery-P2",
+      "document_id": "a1-doc-P",
+      "identity": "resolved",
+      "input_bytes": 1505,
+      "intent_id": "ordinary",
+      "media_type": "application/pdf",
+      "sha256": "be9827a4efc8401cdfb5a76a8b6b17d3a5d8df67e80e43274ccb74b5fd09d9de",
+      "source_id": "a1-source-P",
+      "source_revision": "a1-P-r2"
+    },
+    {
+      "artifact": "delivery-renamed.pdf",
+      "delivery_key": "a1-delivery-renamed-P",
+      "document_id": "a1-doc-P",
+      "identity": "resolved",
+      "input_bytes": 1505,
+      "intent_id": "ordinary",
+      "media_type": "application/pdf",
+      "sha256": "4fb883b2ae49d073b37bb649917050da03c16a4e6e86f1cdb6c4ff3bdb336c34",
+      "source_id": "a1-source-P",
+      "source_revision": "a1-P-r1"
+    },
+    {
+      "artifact": "ambiguous-copy.pdf",
+      "delivery_key": "a1-delivery-ambiguous-P",
+      "document_id": null,
+      "identity": "ambiguous",
+      "input_bytes": 1505,
+      "intent_id": "ordinary",
+      "media_type": "application/pdf",
+      "sha256": "4fb883b2ae49d073b37bb649917050da03c16a4e6e86f1cdb6c4ff3bdb336c34",
+      "source_id": "a1-source-ambiguous",
+      "source_revision": "a1-ambiguous-r1"
+    }
+  ],
+  "manifest_version": "a1-exact-fixture-1",
+  "processing_contract": "fixture-v1",
+  "provenance": "New bounded synthetic inputs; no historical/customer/private content.",
+  "reference_set": "none",
+  "selection_policy": "none"
+}

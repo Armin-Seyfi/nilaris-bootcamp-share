@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Schema Attribute · NILARIS Reviewer</title>
+  <link rel="stylesheet" href="/rfq/style.css">
+  <script defer src="/rfq/app.js"></script>
+</head>
+<body>
+<header><strong>NILARIS</strong><span>Reviewer</span></header>
+<main>
+  <section id="login">
+    <h1>Open Reviewer session</h1>
+    <form id="login-form">
+      <label for="token">Local Reviewer key</label>
+      <input type="password" id="token" autocomplete="off" required>
+      <button>Open workspace</button>
+    </form>
+  </section>
+  <article id="workspace" hidden>
+    <p class="context">Pump</p><h1 id="schema-title">Product Type Schema draft</h1>
+    <p id="version-id" hidden></p>
+    <p id="coverage"></p>
+    <form id="alias-review" aria-labelledby="alias-heading" hidden>
+      <h2 id="alias-heading">Product Type Alias review</h2>
+      <p>Initial proposal: <strong id="alias-initial"></strong></p>
+      <div class="alias-evidence">
+        <section><h3 id="row-heading"></h3><pre id="row-passage"></pre>
+          <a id="alias-row-link" target="_blank" rel="noopener">View original row</a></section>
+        <section><h3 id="note-heading"></h3><p id="note-context"></p><pre id="note-passage"></pre>
+          <a id="alias-note-link" target="_blank" rel="noopener">View original note</a></section>
+      </div>
+      <label for="alias-name">Attribute name</label>
+      <input id="alias-name" required maxlength="160">
+      <label for="alias-decision">Alias decision</label>
+      <select id="alias-decision" required>
+        <option value="">Choose a decision</option>
+        <option value="confirm">Confirm Product Type Alias</option>
+        <option value="separate">Keep definitions separate</option>
+      </select>
+      <button type="submit">Save Alias review</button>
+    </form>
+    <div class="table-scroll"><table aria-label="Pump Schema">
+      <thead><tr><th>Row</th><th>Attribute</th><th>Observed value</th><th>Unit</th><th>Outcome</th><th>Evidence</th></tr></thead>
+      <tbody id="schema-rows"></tbody>
+    </table></div>
+    <section id="definition-section" hidden>
+      <h2 id="definition-heading">Schema definitions for approval</h2>
+      <p>Requirements and conditions are unspecified for each definition. Observed equipment values remain in the evidence table.</p>
+      <div class="table-scroll"><table aria-labelledby="definition-heading">
+        <thead><tr><th>Attribute</th><th>Type</th><th>Unit</th><th>Origin</th><th>Source observations</th></tr></thead>
+        <tbody id="definitions"></tbody>
+      </table></div>
+    </section>
+    <section id="history" hidden>
+      <h2>Reviewer corrections</h2><ol id="corrections"></ol>
+      <button id="older-corrections" hidden>Show older corrections</button>
+    </section>
+    <form id="approval" hidden>
+      <h2>Whole-Schema approval</h2>
+      <p id="approval-scope"></p>
+      <button id="approve" type="submit">Approve entire Schema draft</button>
+    </form>
+    <section id="versions" hidden>
+      <h2>Approved pump Schema versions</h2><ul id="version-links"></ul>
+      <button id="older-versions" hidden>Show older versions</button>
+    </section>
+    <details id="fixtures"><summary>Recorded test responses</summary><div class="inner">
+    <label for="run-choice">Local test response</label>
+    <select id="run-choice"></select>
+    <p id="run-id" class="revision"></p>
+    <dl class="initial-result">
+      <dt>Initial proposal</dt><dd id="initial-name"></dd>
+      <dt>Selected evidence</dt><dd id="selected-label"></dd>
+      <dt>Initial discovery verdict</dt><dd id="verdict"></dd>
+    </dl>
+    <form id="editor">
+      <label for="name">Attribute name</label>
+      <div class="edit"><input id="name" required maxlength="160"><button>Save session edit</button></div>
+      <p id="origin"></p>
+    </form>
+    <details id="evidence">
+      <summary>Historical evidence</summary>
+      <div class="inner">
+        <p id="locator"></p><pre id="passage"></pre>
+        <p class="caption">Adjacent row for comparison</p><pre id="comparison-row"></pre>
+        <p class="links"><a id="source" target="_blank" rel="noopener">View highlighted original page ↗</a>
+        <a id="pdf" target="_blank" rel="noopener">Open original PDF at row ↗</a></p>
+      </div>
+    </details>
+    <details id="inspection">
+      <summary>Inspect minimized request</summary>
+      <div class="inner">
+        <p>Request body SHA-256 <code id="captured-digest"></code></p>
+        <h2>Recorded local test response</h2><pre id="test-response"></pre>
+        <h2>Request at the send boundary</h2><pre id="envelope"></pre>
+        <h2>Serialized request body</h2><pre id="body"></pre>
+        <h2>Comparison with the original RFQ</h2><pre id="comparison"></pre>
+        <h2>Local transport receipt</h2><pre id="transport"></pre>
+      </div>
+    </details>
+    </div></details>
+  </article>
+  <p id="status" role="status" aria-live="polite"></p>
+</main>
+</body>
+</html>

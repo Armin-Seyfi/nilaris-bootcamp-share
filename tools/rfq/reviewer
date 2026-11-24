@@ -1,0 +1,20 @@
+#!/bin/sh
+# Run on macOS with the NILARIS Conda environment and pinned local overlay.
+set -eu
+if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
+    echo 'Usage: tools/rfq/reviewer PRIVATE_BUNDLE_DIRECTORY [ABSOLUTE_REVIEW_CONFIG]' >&2
+    exit 2
+fi
+bundle=$(cd "$1" && pwd -P)
+cd "$(dirname "$0")/../.."
+conda=/opt/miniconda3/bin/conda
+if [ "$#" -eq 2 ]; then
+    port=$("$conda" run --no-capture-output -n nilaris python runtime/a1/with_overlay.py -m nilaris.rfq_runtime "$2")
+    exec /usr/bin/sandbox-exec -D "RFQ_DATABASE=localhost:$port" \
+        -p '(version 1)(allow default)(deny network-outbound)(allow network-outbound (remote tcp (param "RFQ_DATABASE")))' \
+        "$conda" run --no-capture-output -n nilaris python runtime/a1/with_overlay.py \
+        -m nilaris.rfq_demo --bundle "$bundle" --review-config "$2" --port 18776 --seconds 900
+fi
+exec /usr/bin/sandbox-exec -p '(version 1)(allow default)(deny network-outbound)' \
+    "$conda" run --no-capture-output -n nilaris python \
+    runtime/a1/with_overlay.py -m nilaris.rfq_demo --bundle "$bundle" --port 18768 --seconds 7200
